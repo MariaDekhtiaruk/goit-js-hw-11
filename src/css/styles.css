@@ -108,3 +108,6 @@ body {
   visibility: hidden;
   pointer-events: none;
 }
+.button > .spinner.is-hidden {
+  display: none;
+}

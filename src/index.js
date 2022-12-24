@@ -1,8 +1,9 @@
 import { Notify } from 'notiflix';
 import './css/styles.css';
+import NewApiServices from './fetchAPI';
 
-const API_KEY = '32302956-bbb850179db0fe460a4f0a5f2';
-let currentPage = 1;
+const newApiService = new NewApiServices();
+
 const searchRef = document.querySelector(`[name='searchQuery']`);
 const searchBtnRef = document.querySelector(`.search-btn`);
 const searchForm = document.querySelector(`.search-form`);
@@ -11,7 +12,41 @@ const galleryRef = document.querySelector(`.cataloge-list`);
 
 searchForm.addEventListener('submit', searchHandler);
 console.log(searchBtnRef);
-loadMoreBtn.addEventListener('click', searchHandler);
+loadMoreBtn.addEventListener('click', onLoadMore);
+
+async function searchHandler(event) {
+  event.preventDefault();
+  galleryRef.innerHTML = '';
+  newApiService.query = searchRef.value;
+  if (newApiService.query === '') {
+    return alert('Fill something');
+  }
+  newApiService.resetPage();
+  const pictures = await newApiService.fetchPictures();
+
+  galleryRef.innerHTML += pictures.map(item => buildPhotoCard(item)).join('');
+  alert(newApiService.totalHits);
+
+  if (!newApiService.isLastPage) {
+    loadMoreBtn.classList.remove('is-hidden');
+  }
+}
+
+async function onLoadMore(event) {
+  loadMoreBtn.classList.add('is-hidden');
+  event.preventDefault();
+
+  const pictures = await newApiService.fetchPictures();
+
+  galleryRef.innerHTML += pictures.map(item => buildPhotoCard(item)).join('');
+
+  if (newApiService.isLastPage) {
+    alert('vse');
+  } else {
+    loadMoreBtn.classList.remove('is-hidden');
+  }
+}
+
 const buildPhotoCard = card => {
   return `<li class="photo-card">
   <img class="image" src="${card.webformatURL}" alt="" loading="lazy" />
@@ -31,39 +66,6 @@ const buildPhotoCard = card => {
   </div>
 </li>`;
 };
-let query = '';
-async function searchHandler(event) {
-  event.preventDefault();
-  query = searchRef.value;
-  console.log(query);
-  const urlAPI = `https://pixabay.com/api/?key=${API_KEY}&q=${query}&image_type=photo&orientation=horizontal&safesearch=true&page=${currentPage}&per_page=8
-`;
-  try {
-    const data = await fetch(urlAPI).then(res => {
-      if (res.status !== 200) {
-        throw new Error(res.message);
-      }
-      return res.json();
-    });
-
-    currentPage += 1;
-
-    console.log(data);
-
-    const resultData = data.hits;
-    if (resultData.length === 0) {
-      alert(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
-
-    galleryRef.innerHTML += resultData
-      .map(item => buildPhotoCard(item))
-      .join('');
-  } catch (error) {
-    console.log(error.message);
-  }
-}
 
 // searchRef.addEventListener('input', e => {
 //   const searchName = e.target.value.trim();
