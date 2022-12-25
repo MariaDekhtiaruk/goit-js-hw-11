@@ -3,6 +3,7 @@ import './css/styles.css';
 import NewApiServices from './fetchAPI';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import throttle from 'lodash.throttle';
 
 const newApiService = new NewApiServices();
 
@@ -11,10 +12,24 @@ const searchBtnRef = document.querySelector(`.search-btn`);
 const searchForm = document.querySelector(`.search-form`);
 const loadMoreBtn = document.querySelector(`.load-more`);
 const galleryRef = document.querySelector(`.cataloge-list`);
-
+let instance = null;
 searchForm.addEventListener('submit', searchHandler);
 console.log(searchBtnRef);
 loadMoreBtn.addEventListener('click', onLoadMore);
+
+const lightbox = new SimpleLightbox('.photo-card a', {
+  captions: true,
+  captionsData: 'alt',
+  captionSelector: `img`,
+  captionPosition: `bottom`,
+  captionDelay: 250,
+});
+function onEscapePress(evt) {
+  console.log(evt.key);
+  if (evt.key === 'Escape') {
+    instance.close();
+  }
+}
 
 async function searchHandler(event) {
   event.preventDefault();
@@ -32,29 +47,54 @@ async function searchHandler(event) {
   galleryRef.innerHTML += pictures.map(item => buildPhotoCard(item)).join('');
   Notify.info(`Hooray! We found totalHits images: ${newApiService.totalHits}`);
 
+  lightbox.refresh();
   if (!newApiService.isLastPage) {
     loadMoreBtn.classList.remove('is-hidden');
   }
 }
 
+window.addEventListener(
+  'scroll',
+  throttle(e => {
+    if (newApiService.isLastPage) {
+      return;
+    }
+    const pageFullHeight = document.body.offsetHeight;
+    const bottomViewPoint = window.innerHeight + window.scrollY;
+    if (bottomViewPoint >= pageFullHeight) {
+      onLoadMore();
+    }
+  }, 300)
+);
+
 async function onLoadMore(event) {
   loadMoreBtn.classList.add('is-hidden');
-  event.preventDefault();
+  event?.preventDefault();
 
   const pictures = await newApiService.fetchPictures();
 
   galleryRef.innerHTML += pictures.map(item => buildPhotoCard(item)).join('');
-
+  await lightbox.refresh();
   if (newApiService.isLastPage) {
     Notify.info("We're sorry, but you've reached the end of search results.");
   } else {
     loadMoreBtn.classList.remove('is-hidden');
   }
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }
 
 const buildPhotoCard = card => {
   return `<li class="photo-card">
+  <a class="gallery-item" href="${card.largeImageURL}">
   <img class="image" src="${card.webformatURL}" alt="" loading="lazy" />
+  </a>
   <div class="info">
     <p class="info-item">
       <b>Likes: ${card.likes}</b>

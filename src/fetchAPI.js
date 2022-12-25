@@ -1,4 +1,5 @@
 import { Notify } from 'notiflix';
+import axios from 'axios';
 export default class NewApiServices {
   API_KEY = '32302956-bbb850179db0fe460a4f0a5f2';
   currentPage = 1;
@@ -10,11 +11,11 @@ export default class NewApiServices {
     const urlAPI = `https://pixabay.com/api/?key=${this.API_KEY}&q=${this.query}&image_type=photo&orientation=horizontal&safesearch=true&page=${this.currentPage}&per_page=${this.perPage}
 `;
     try {
-      const data = await fetch(urlAPI).then(res => {
+      const data = await axios.get(urlAPI).then(res => {
         if (res.status !== 200) {
           throw new Error(res.message);
         }
-        return res.json();
+        return res.data;
       });
 
       const resultData = data.hits;

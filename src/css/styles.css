@@ -10,12 +10,16 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #2d7bce;
+  background-color: #d7d7ce;
   color: #212121;
   line-height: 1.5;
 }
 .container {
-  width: 1200px;
+  max-width: 1200px;
+  padding-left: 15px;
+  padding-right: 15px;
+  margin-left: auto;
+  margin-right: auto;
 }
 .search-form {
   font: inherit;
@@ -72,6 +76,10 @@ body {
 .photo-card {
   width: calc((100% - 80px) / 4);
   overflow: hidden;
+  background-color: #c0c0ad;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  border: rgb(210, 178, 178);
 }
 .image {
   height: 208px;
