@@ -84,6 +84,32 @@ body {
 .image {
   height: 208px;
 }
+
+.info {
+  display: flex;
+}
+
+.info-item {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.19;
+  text-align: center;
+  letter-spacing: 0.03em;
+  color: black;
+  margin-bottom: 10px;
+}
+
+.info-item-data {
+  ont-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1.19;
+  text-align: center;
+  letter-spacing: 0.03em;
+  color: rgb(67, 65, 65);
+  margin-bottom: 10px;
+}
 .load-more {
   width: 200px;
   height: 50px;

@@ -97,16 +97,16 @@ const buildPhotoCard = card => {
   </a>
   <div class="info">
     <p class="info-item">
-      <b>Likes: ${card.likes}</b>
+      <b>Likes: <span class="info-item-data"> ${card.likes}</span></b>
     </p>
     <p class="info-item">
-      <b>Views: ${card.views}</b>
+      <b>Views: <span class="info-item-data"> ${card.views}</span></b>
     </p>
     <p class="info-item">
-      <b>Comments: ${card.comments}</b>
+      <b>Comments: <span class="info-item-data"> ${card.comments}</span></b>
     </p>
     <p class="info-item">
-      <b>Downloads: ${card.downloads}</b>
+      <b>Downloads:<span class="info-item-data"> ${card.downloads}</span></b>
     </p>
   </div>
 </li>`;
