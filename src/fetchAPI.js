@@ -1,3 +1,4 @@
+import { Notify } from 'notiflix';
 export default class NewApiServices {
   API_KEY = '32302956-bbb850179db0fe460a4f0a5f2';
   currentPage = 1;
@@ -18,7 +19,7 @@ export default class NewApiServices {
 
       const resultData = data.hits;
       if (resultData.length === 0) {
-        alert(
+        Notify.warning(
           'Sorry, there are no images matching your search query. Please try again.'
         );
         return [];

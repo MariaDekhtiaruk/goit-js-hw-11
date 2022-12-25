@@ -1,6 +1,8 @@
 import { Notify } from 'notiflix';
 import './css/styles.css';
 import NewApiServices from './fetchAPI';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const newApiService = new NewApiServices();
 
@@ -19,13 +21,16 @@ async function searchHandler(event) {
   galleryRef.innerHTML = '';
   newApiService.query = searchRef.value;
   if (newApiService.query === '') {
-    return alert('Fill something');
+    return Notify.warning('Fill something');
   }
   newApiService.resetPage();
   const pictures = await newApiService.fetchPictures();
+  if (pictures.length === 0) {
+    return;
+  }
 
   galleryRef.innerHTML += pictures.map(item => buildPhotoCard(item)).join('');
-  alert(newApiService.totalHits);
+  Notify.info(`Hooray! We found totalHits images: ${newApiService.totalHits}`);
 
   if (!newApiService.isLastPage) {
     loadMoreBtn.classList.remove('is-hidden');
@@ -41,7 +46,7 @@ async function onLoadMore(event) {
   galleryRef.innerHTML += pictures.map(item => buildPhotoCard(item)).join('');
 
   if (newApiService.isLastPage) {
-    alert('vse');
+    Notify.info("We're sorry, but you've reached the end of search results.");
   } else {
     loadMoreBtn.classList.remove('is-hidden');
   }
